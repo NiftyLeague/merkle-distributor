@@ -1,5 +1,6 @@
 import { HardhatUserConfig } from 'hardhat/config';
 import '@nomiclabs/hardhat-waffle';
+import '@nomiclabs/hardhat-etherscan';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -9,6 +10,9 @@ dotenv.config();
  */
 const config: HardhatUserConfig = {
   defaultNetwork: process.env.HARDHAT_NETWORK,
+  ...(process.env.ETHERSCAN_API_KEY && {
+    etherscan: { apiKey: process.env.ETHERSCAN_API_KEY },
+  }),
   networks: {
     localhost: {
       url: 'http://localhost:8545',
@@ -26,7 +30,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.6.11',
+        version: '0.7.6',
         settings: {
           optimizer: {
             enabled: true,
