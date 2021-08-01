@@ -18,3 +18,7 @@ The following assumes the use of `node@>=10`.
 ## Run Tests
 
 `yarn test`
+
+## Generate Merkle Root for AXS Token Holders
+
+`yarn generate-merkle-root:axs`

@@ -43,6 +43,7 @@
     "test": "mocha",
     "generate-merkle-root": "ts-node scripts/generate-merkle-root.ts",
     "generate-merkle-root:example": "ts-node scripts/generate-merkle-root.ts --input scripts/example.json",
+    "generate-merkle-root:axs": "ts-node scripts/generate-merkle-root.ts --input data/axs_token_holders.json",
     "prepublishOnly": "yarn test"
   }
 }
