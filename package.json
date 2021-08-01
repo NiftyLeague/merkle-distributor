@@ -21,6 +21,8 @@
     "node": ">=10"
   },
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.0",
+    "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/contracts": "3.1.0",
     "@types/chai": "^4.2.6",
     "@types/mocha": "^5.2.7",
@@ -29,6 +31,8 @@
     "commander": "^6.1.0",
     "ethereum-waffle": "^3.0.0",
     "ethereumjs-util": "^7.0.4",
+    "ethers": "^5.0.0",
+    "hardhat": "^2.5.0",
     "mocha": "^6.2.2",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.0",
@@ -37,13 +41,15 @@
     "typescript": "^3.7.3"
   },
   "scripts": {
-    "precompile": "rimraf ./build/",
-    "compile": "waffle",
-    "pretest": "yarn compile",
-    "test": "mocha",
+    "clean": "rimraf artifacts cache",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.ts",
+    "test": "hardhat test",
     "generate-merkle-root": "ts-node scripts/generate-merkle-root.ts",
-    "generate-merkle-root:example": "ts-node scripts/generate-merkle-root.ts --input scripts/example.json",
     "generate-merkle-root:axs": "ts-node scripts/generate-merkle-root.ts --input data/axs_token_holders.json",
-    "prepublishOnly": "yarn test"
+    "verify-merkle-root": "ts-node scripts/verify-merkle-root.ts --input data/result.json"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0"
   }
 }
