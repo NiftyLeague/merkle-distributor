@@ -22,3 +22,13 @@ The following assumes the use of `node@>=10`.
 ## Generate Merkle Root for AXS Token Holders
 
 `yarn generate-merkle-root:axs`
+
+## Run Hardhat Node
+
+`yarn chain`
+
+## Deploy
+
+_make sure .env file points to your target network and includes API keys_
+
+`yarn deploy`

@@ -44,6 +44,7 @@
   "scripts": {
     "clean": "rimraf artifacts cache",
     "compile": "hardhat compile",
+    "chain": "hardhat node",
     "deploy": "hardhat run scripts/deploy.ts",
     "test": "hardhat test",
     "generate-merkle-root": "ts-node scripts/generate-merkle-root.ts",
