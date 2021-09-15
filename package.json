@@ -21,19 +21,11 @@
     "node": ">=10"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.0",
-    "@nomiclabs/hardhat-etherscan": "^2.1.3",
-    "@nomiclabs/hardhat-waffle": "^2.0.0",
-    "@openzeppelin/contracts": "3.4.0",
     "@types/chai": "^4.2.6",
     "@types/mocha": "^5.2.7",
-    "axios": "^0.20.0",
     "chai": "^4.2.0",
     "commander": "^6.1.0",
     "ethereum-waffle": "^3.0.0",
-    "ethereumjs-util": "^7.0.4",
-    "ethers": "^5.4.0",
-    "hardhat": "^2.5.0",
     "mocha": "^6.2.2",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.0",
@@ -52,6 +44,16 @@
     "verify-merkle-root": "ts-node scripts/verify-merkle-root.ts --input data/result.json"
   },
   "dependencies": {
-    "dotenv": "^10.0.0"
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-etherscan": "^2.1.6",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "3.4.0",
+    "@tenderly/hardhat-tenderly": "^1.0.12",
+    "axios": "^0.20.0",
+    "dotenv": "^10.0.0",
+    "eth-provider": "^0.9.4",
+    "ethereumjs-util": "^7.1.0",
+    "ethers": "^5.4.6",
+    "hardhat": "^2.6.4"
   }
 }

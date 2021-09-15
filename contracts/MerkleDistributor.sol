@@ -13,11 +13,17 @@ contract MerkleDistributor is IMerkleDistributor {
     mapping(uint256 => uint256) private claimedBitMap;
 
     address internal immutable _deployer;
+    address internal immutable _beneficiary;
 
-    constructor(address token_, bytes32 merkleRoot_) {
+    constructor(
+        address token_,
+        bytes32 merkleRoot_,
+        address beneficiary_
+    ) {
         token = token_;
         merkleRoot = merkleRoot_;
         _deployer = msg.sender;
+        _beneficiary = beneficiary_;
     }
 
     function isClaimed(uint256 index) public view override returns (bool) {
@@ -55,6 +61,6 @@ contract MerkleDistributor is IMerkleDistributor {
 
     function collectUnclaimed(uint256 amount) external {
         require(msg.sender == _deployer, 'MerkleDistributor: not deployer');
-        require(IERC20(token).transfer(_deployer, amount), 'MerkleDistributor: collectUnclaimed failed.');
+        require(IERC20(token).transfer(_beneficiary, amount), 'MerkleDistributor: collectUnclaimed failed.');
     }
 }

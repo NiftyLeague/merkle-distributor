@@ -1,19 +1,88 @@
-import { ethers } from 'hardhat';
+import { ethers, tenderly, run } from 'hardhat';
 import { Contract } from '@ethersproject/contracts';
 import fs from 'fs';
+import ethProvider from 'eth-provider';
+
+const NIFTY_DAO_SAFE = '0xd06Ae6fB7EaDe890f3e295D69A6679380C9456c1';
+
+const targetNetwork = process.env.HARDHAT_NETWORK as string;
+
+const getLedgerSigner = async () => {
+  const frame = ethProvider('frame');
+  const ledgerSigner = (await frame.request({ method: 'eth_requestAccounts' }))[0];
+  const { Web3Provider } = ethers.providers;
+  const provider = new Web3Provider(frame);
+  return provider.getSigner(ledgerSigner);
+};
 
 const getToken = async () => {
-  const Token = await ethers.getContractFactory('TestERC20');
-  const initialSupply = ethers.utils.parseEther('1000000000');
-  const token = await Token.deploy('Test Token', 'TTO', initialSupply);
+  let token;
+  const addressPath = `./NFTL/token.${targetNetwork}.address`;
+  if (fs.existsSync(addressPath)) {
+    const abi = JSON.parse(fs.readFileSync('./NFTL/abi.json', { encoding: 'utf8' }));
+    const nftlAddress = fs.readFileSync(addressPath).toString();
+    const signer = await getLedgerSigner();
+    token = await ethers.getContractAt(abi, nftlAddress, signer);
+    await token.deployed();
+  } else {
+    const Token = await ethers.getContractFactory('TestERC20');
+    const initialSupply = ethers.utils.parseEther('420000000');
+    token = await Token.deploy('Test Token', 'TTO', initialSupply);
+  }
   return token;
 };
 
+const tenderlyVerify = async ({ contractName, contractAddress }: { contractName: string; contractAddress: string }) => {
+  const tenderlyNetworks = ['kovan', 'goerli', 'mainnet', 'rinkeby', 'ropsten', 'matic', 'mumbai', 'xDai', 'POA'];
+
+  if (tenderlyNetworks.includes(targetNetwork)) {
+    console.log(` 📁 Attempting tenderly verification of ${contractName} on ${targetNetwork}`);
+    await tenderly.persistArtifacts({
+      name: contractName,
+      address: contractAddress,
+    });
+    const verification = await tenderly.verify({
+      name: contractName,
+      address: contractAddress,
+      network: targetNetwork,
+    });
+    return verification;
+  }
+  console.log(` 🧐 Contract verification not supported on ${targetNetwork}`);
+};
+
+const etherscanVerify = async ({
+  address,
+  constructorArguments = [],
+}: {
+  address: string;
+  constructorArguments: unknown[];
+}) => {
+  try {
+    console.log(` 📁 Attempting etherscan verification of ${address} on ${targetNetwork}`);
+    return await run('verify:verify', { address, constructorArguments });
+  } catch (e) {
+    return e;
+  }
+};
+
 const deployDistributor = async (token: Contract) => {
-  const Distributor = await ethers.getContractFactory('MerkleDistributor');
+  const Distributor = await ethers.getContractFactory('MerkleDistributor', {
+    ...(targetNetwork !== 'localhost' && { signer: await getLedgerSigner() }),
+  });
   const tree = JSON.parse(fs.readFileSync('data/result.json', { encoding: 'utf8' }));
-  console.log('token.address, tree.merkleRoot', token.address, tree.merkleRoot);
-  const distributor = await Distributor.deploy(token.address, tree.merkleRoot);
+  console.log('token.address:', token.address);
+  console.log('tree.merkleRoot:', tree.merkleRoot);
+  const distributor = await Distributor.deploy(token.address, tree.merkleRoot, NIFTY_DAO_SAFE);
+  console.log(` 🛰  MerkleDistributor Deployed to: ${targetNetwork} ${token.address}`);
+  if (targetNetwork !== 'localhost') {
+    await distributor.deployTransaction.wait(5);
+    await tenderlyVerify({ contractName: 'MerkleDistributor', contractAddress: distributor.address });
+    await etherscanVerify({
+      address: distributor.address,
+      constructorArguments: [token.address, tree.merkleRoot, NIFTY_DAO_SAFE],
+    });
+  }
   return distributor;
 };
 
@@ -32,10 +101,12 @@ const postDeploy = async (distributor: Contract, token: Contract) => {
 
 async function main() {
   const token = await getToken();
-  const distributor = await deployDistributor(token);
-  const distributorSupply = ethers.utils.parseEther('80000000');
-  await token.transfer(distributor.address, distributorSupply);
-  await postDeploy(distributor, token);
+  if (token) {
+    const distributor = await deployDistributor(token);
+    const distributorSupply = ethers.utils.parseEther('104000000');
+    await token.mint(distributor.address, distributorSupply);
+    await postDeploy(distributor, token);
+  }
 }
 
 main()
