@@ -59,10 +59,10 @@ const deployDistributor = async (token: Contract) => {
   console.log('token.address:', token.address);
   console.log('tree.merkleRoot:', tree.merkleRoot);
   const distributor = await Distributor.deploy(token.address, tree.merkleRoot, NIFTY_DAO_SAFE);
-  console.log(` 🛰  MerkleDistributor Deployed to: ${targetNetwork} ${token.address}`);
+  console.log(` 🛰  MerkleDistributor Deployed to: ${targetNetwork} ${distributor.address}`);
   if (targetNetwork !== 'localhost') {
     await distributor.deployTransaction.wait(5);
-    console.log(` 📁 Attempting etherscan verification of ${token.address} on ${targetNetwork}`);
+    console.log(` 📁 Attempting etherscan verification of ${distributor.address} on ${targetNetwork}`);
     await run('verify:verify', {
       address: distributor.address,
       constructorArguments: [token.address, tree.merkleRoot, NIFTY_DAO_SAFE],

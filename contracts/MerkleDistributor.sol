@@ -59,8 +59,9 @@ contract MerkleDistributor is IMerkleDistributor {
         emit Claimed(index, account, amount);
     }
 
-    function collectUnclaimed(uint256 amount) external {
+    function collectUnclaimed() external {
         require(msg.sender == _deployer, 'MerkleDistributor: not deployer');
-        require(IERC20(token).transfer(_beneficiary, amount), 'MerkleDistributor: collectUnclaimed failed.');
+        uint256 balance = IERC20(token).balanceOf(address(this));
+        require(IERC20(token).transfer(_beneficiary, balance), 'MerkleDistributor: collectUnclaimed failed.');
     }
 }
