@@ -51,21 +51,6 @@ const tenderlyVerify = async ({ contractName, contractAddress }: { contractName:
   console.log(` 🧐 Contract verification not supported on ${targetNetwork}`);
 };
 
-const etherscanVerify = async ({
-  address,
-  constructorArguments = [],
-}: {
-  address: string;
-  constructorArguments: unknown[];
-}) => {
-  try {
-    console.log(` 📁 Attempting etherscan verification of ${address} on ${targetNetwork}`);
-    return await run('verify:verify', { address, constructorArguments });
-  } catch (e) {
-    return e;
-  }
-};
-
 const deployDistributor = async (token: Contract) => {
   const Distributor = await ethers.getContractFactory('MerkleDistributor', {
     ...(targetNetwork !== 'localhost' && { signer: await getLedgerSigner() }),
@@ -77,11 +62,12 @@ const deployDistributor = async (token: Contract) => {
   console.log(` 🛰  MerkleDistributor Deployed to: ${targetNetwork} ${token.address}`);
   if (targetNetwork !== 'localhost') {
     await distributor.deployTransaction.wait(5);
-    await tenderlyVerify({ contractName: 'MerkleDistributor', contractAddress: distributor.address });
-    await etherscanVerify({
+    console.log(` 📁 Attempting etherscan verification of ${token.address} on ${targetNetwork}`);
+    await run('verify:verify', {
       address: distributor.address,
       constructorArguments: [token.address, tree.merkleRoot, NIFTY_DAO_SAFE],
     });
+    await tenderlyVerify({ contractName: 'MerkleDistributor', contractAddress: distributor.address });
   }
   return distributor;
 };

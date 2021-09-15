@@ -4,6 +4,7 @@ wrangler.toml
 wrangler.toml
 artifacts
 cache
+deployments
 
 # misc
 .DS_Store

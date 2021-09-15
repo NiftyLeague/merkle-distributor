@@ -27,9 +27,7 @@ function getMnemonic() {
  */
 const config: HardhatUserConfig = {
   defaultNetwork,
-  ...(process.env.ETHERSCAN_API_KEY && {
-    etherscan: { apiKey: process.env.ETHERSCAN_API_KEY },
-  }),
+  etherscan: { apiKey: process.env.ETHERSCAN_API_KEY },
   networks: {
     localhost: {
       url: 'http://localhost:8545',
