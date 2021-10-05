@@ -89,8 +89,8 @@ async function main() {
   const token = await getToken();
   if (token) {
     const distributor = await deployDistributor(token);
-    const distributorSupply = ethers.utils.parseEther('104000000');
-    await token.mint(distributor.address, distributorSupply);
+    // const distributorSupply = ethers.utils.parseEther('104000000');
+    // await token.mint(distributor.address, distributorSupply);
     await postDeploy(distributor, token);
   }
 }

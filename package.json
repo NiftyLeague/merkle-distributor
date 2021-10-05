@@ -41,6 +41,7 @@
     "test": "hardhat test",
     "generate-merkle-root": "ts-node scripts/generate-merkle-root.ts",
     "generate-merkle-root:axs": "ts-node scripts/generate-merkle-root.ts --input data/axs_token_holders.json",
+    "generate-merkle-root:degens": "ts-node scripts/generate-merkle-root.ts --input data/degen_airdrop.json",
     "verify-merkle-root": "ts-node scripts/verify-merkle-root.ts --input data/result.json"
   },
   "dependencies": {
